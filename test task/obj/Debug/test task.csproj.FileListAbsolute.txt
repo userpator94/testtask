@@ -1,0 +1,10 @@
+c:\users\илья\documents\visual studio 2015\Projects\test task\test task\bin\Debug\test task.exe.config
+c:\users\илья\documents\visual studio 2015\Projects\test task\test task\bin\Debug\test task.exe
+c:\users\илья\documents\visual studio 2015\Projects\test task\test task\bin\Debug\test task.pdb
+c:\users\илья\documents\visual studio 2015\Projects\test task\test task\obj\Debug\test_task.Form1.resources
+c:\users\илья\documents\visual studio 2015\Projects\test task\test task\obj\Debug\test_task.Properties.Resources.resources
+c:\users\илья\documents\visual studio 2015\Projects\test task\test task\obj\Debug\test task.csproj.GenerateResource.Cache
+c:\users\илья\documents\visual studio 2015\Projects\test task\test task\obj\Debug\test task.exe
+c:\users\илья\documents\visual studio 2015\Projects\test task\test task\obj\Debug\test task.pdb
+C:\Users\Илья\documents\visual studio 2015\Projects\test task\test task\obj\Debug\test task.csprojResolveAssemblyReference.cache
+C:\Users\Илья\documents\visual studio 2015\Projects\test task\test task\obj\Debug\test_task.picform.resources
