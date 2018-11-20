@@ -14,6 +14,8 @@ namespace test_task
     public partial class Form1 : Form
     {
         private static string rootpath = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
+        public static string f2picpath = "";
+        private static Dictionary<String, String> picboxes = new Dictionary<String, String>();
              
         public Form1()
         {
@@ -104,21 +106,9 @@ namespace test_task
             //tt.Show("String", win, mousePosition);
         }
 
-        private void textBox1_DragEnter(object sender, DragEventArgs e)
-        {
-            e.Effect = DragDropEffects.Copy;
-        }
-
-        private void textBox1_DragDrop(object sender, DragEventArgs e)
-        {
-            e.Effect = DragDropEffects.Copy;
-            string imagepath = treeView.SelectedNode.FullPath.ToString();
-            string ss = rootpath.Substring(0, rootpath.LastIndexOf('\\') + 1);
-            textBox1.Text = ss + imagepath;
-        }
-
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
+            drawPicBoxMatrix();
             //listView1.View = View.Details;
             //listView1.Columns.Add("1", 120);
             ////listView1.AutoResizeColumn(0, ColumnHeaderAutoResizeStyle.ColumnContent);
@@ -128,10 +118,12 @@ namespace test_task
             ////Bitmap bmp = new Bitmap(@"C:\Users\Илья\Pictures\f6Wqe4jnb7U.jpg");
             //imgs.Images.Add(Image.FromFile(@"C:\Users\Илья\Pictures\f6Wqe4jnb7U.jpg"));
             //listView1.SmallImageList = imgs;
-            //listView1.Items.Add("", 0);
-
+            //listView1.Items.Add("", 0);            
+        }
+        private void drawPicBoxMatrix()
+        {
             flowLayoutPanel1.Margin = new Padding(15, 15, 15, 15);
-            flowLayoutPanel1.Controls.Clear();            
+            flowLayoutPanel1.Controls.Clear();
 
             int count = 4;
             if (comboBox1.SelectedIndex == 0) count = 4;
@@ -143,37 +135,82 @@ namespace test_task
             for (int i = 0; i < count; i++)
             {
                 var pb = new PictureBox();
-                int a = flowLayoutPanel1.Size.Width / (comboBox1.SelectedIndex+2) - 7;
+                int a = flowLayoutPanel1.Size.Width / (comboBox1.SelectedIndex + 2) - 7;
                 pb.Location = new Point(i * a + 10, y);
                 pb.Size = new Size(a, a);
-                pb.SizeMode = PictureBoxSizeMode.StretchImage;
-                pb.MouseDown += pictureMover;
+                pb.SizeMode = PictureBoxSizeMode.Zoom;
+                pb.BorderStyle = BorderStyle.FixedSingle;
                 pb.AllowDrop = true;
+                pb.Name = "pictureBox" + (i + 1);
+                pb.MouseDown += pictureMover;
                 pb.DragEnter += picDragEnter;
                 pb.DragDrop += picDragDrop;
-                pb.BorderStyle = BorderStyle.FixedSingle;
+                pb.ContextMenuStrip = contextMenuStrip1;
+                //pb.MouseClick += pictureBox_MouseClick;
+
+                if (picboxes.ContainsKey(pb.Name))
+                {
+                    if (picboxes[pb.Name] != "") pb.Image = Image.FromFile(picboxes[pb.Name]);
+                }
+                else
+                    picboxes.Add(pb.Name, "");
+
+                sortingDictionary(picboxes);
+                //var sortedElements = picboxes.OrderBy(kvp => kvp.Value);
                 flowLayoutPanel1.Controls.Add(pb);
+                GC.Collect();
             }
         }
-        private void clear_button_Click(object sender, EventArgs e)
+
+        private void sortingDictionary(Dictionary<String, String> dic)
         {
-            //flowLayoutPanel1.Controls.Clear();
+            Queue<int> ValueEmpty = new Queue<int>();
+            Stack<String> ValueFit = new Stack<string>();
+            for (int i = 1; i <= dic.Count; i++)
+            {
+                if (dic["pictureBox" + i] == "") ValueEmpty.Enqueue(i);
+                if (dic["pictureBox" + i] != "") ValueFit.Push(i+"|"+dic["pictureBox" + i]);
+            }
+
+            if (ValueFit.Count > 0)
+            {
+                for (int i = 0; i < ValueFit.Count; i++)
+                {
+                    if (ValueEmpty.Count == 0) return;
+                    string[] link = ValueFit.Pop().Split('|');
+                    int pb = ValueEmpty.Dequeue();
+                    if (pb > Convert.ToInt16(link[0])) return;
+                    dic["pictureBox" + pb] = link[1];
+                    dic["pictureBox" + link[0]] = "";
+                }
+            }
+
+        }
+        private void clear_button_Click(object sender, EventArgs e)
+        {        
             foreach (PictureBox pbs in flowLayoutPanel1.Controls)
             {
+                pbs.Image.Dispose();
                 pbs.Image = null;
-                //pbs.Image.Dispose();
             }
+            for(int i=1; i<=picboxes.Count; i++)
+                picboxes["pictureBox" + i] = ""; 
         }
 
         private void pictureMover(object sender, MouseEventArgs e)
         {
-            PictureBox pb = (PictureBox)sender;
-            var img = pb.Image;
-            if (img == null) return;
-            if (DoDragDrop(img, DragDropEffects.Move) == DragDropEffects.Move)
+            if (e.Button == MouseButtons.Left)
             {
-                pb.Image = null;
+                PictureBox pb = (PictureBox)sender;
+                var img = pb.Image;
+                if (img == null) return;
+                if (DoDragDrop(img, DragDropEffects.Move) == DragDropEffects.Move)
+                {
+                    pb.Image = null;
+                    picboxes[pb.Name] = "";
+                }
             }
+            
         }
 
         private void picDragEnter(object sender, DragEventArgs e)
@@ -185,28 +222,81 @@ namespace test_task
         private void picDragDrop(object sender, DragEventArgs e)
         {
             var bmp = (Bitmap)e.Data.GetData(DataFormats.Bitmap);
-            ///////
+            PictureBox pb = (PictureBox)sender;
             if (bmp ==null)
             {
                 string imagepath = treeView.SelectedNode.FullPath.ToString();
                 string ss = rootpath.Substring(0, rootpath.LastIndexOf('\\') + 1) + imagepath;
                 bmp = (Bitmap)Image.FromFile(ss);
+                picboxes[pb.Name] = ss;
             }
-            ///////
-            PictureBox pb = (PictureBox)sender;
-            pb.Image = bmp;
+            pb.Image = bmp;         
+        }    
+        
+
+        private void pictureBox_MouseClick(object sender, MouseEventArgs e)
+        {
+            //var pic = (sender as PictureBox).ImageLocation;//pic is the Name of the PictureBox that is clicked
+            //switch (e.Button){
+            //    //case MouseButtons.Right:
+            //    //    {
+
+            //    //    } break;
+            //    case MouseButtons.Left:{
+            //            MessageBox.Show(pic);//Just for example
+            //            //DesktopIconRightclick.Show(this, new Point(e.X, e.Y));
+            //        } break;
+            //}
         }
 
-        private void contexMenu(object sender, MouseEventArgs e)
+        private void увеличитьToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
-        }
-
-        private void полноэкранныйРежимToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Form f2 = new picform();            
+            try
+            {
+                //f2picpath = ((PictureBox)contextMenuStrip1.SourceControl).ImageLocation;
+                f2picpath = picboxes[((PictureBox)contextMenuStrip1.SourceControl).Name];
+                if (f2picpath.Equals(null))
+                {
+                    MessageBox.Show("Изображение не найдено");
+                    return;
+                }
+            }
+            catch { MessageBox.Show("Изображение не найдено"); }
+            Form f2 = new picform();
             f2.MaximizeBox = true;
             f2.Show();
+        }
+
+        private void очиститьToolStripMenuItem1_Click(object sender, EventArgs e)
+        {         
+            ((PictureBox)contextMenuStrip1.SourceControl).Image.Dispose();
+            ((PictureBox)contextMenuStrip1.SourceControl).Image = null;
+        }
+
+        private void копироватьToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //f2picpath = ((PictureBox)contextMenuStrip1.SourceControl).ImageLocation;
+            f2picpath = picboxes[((PictureBox)contextMenuStrip1.SourceControl).Name];
+        }
+
+        private void вставитьToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ((PictureBox)contextMenuStrip1.SourceControl).Image = Image.FromFile(f2picpath);
+        }
+
+        private void Form1_Resize(object sender, EventArgs e)
+        {
+            if (WindowState == FormWindowState.Maximized)
+            {
+                flowLayoutPanel1.Width = flowLayoutPanel1.Height;
+                drawPicBoxMatrix();
+            }
+            else
+            {
+                flowLayoutPanel1.Width = 370;
+                drawPicBoxMatrix();
+            }
+
         }
     }
 }
