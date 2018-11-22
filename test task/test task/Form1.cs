@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -18,6 +19,7 @@ namespace test_task
         private static Dictionary<String, String> picboxes = new Dictionary<String, String>();
         private static string dragsource = "";
         private static int mouseclickcounter = 0;
+        private static int f2w = 0, f2h = 0;
              
         public Form1()
         {
@@ -101,7 +103,7 @@ namespace test_task
         {
             //toolTip1.Show(Path.GetFileName(treeView.SelectedNode.FullPath.ToString()), this, PointToClient(MousePosition), Int32.MaxValue);
             //toolTip1.ShowAlways = true;  
-            //toolTip1.Show(Path.GetFileName(treeView.SelectedNode.FullPath.ToString()), this, new Point(treeView.Left + flowLayoutPanel1.Width + 1, treeView.Top + flowLayoutPanel1.Width + 1), Int32.MaxValue);            
+            //toolTip1.Show(Path.GetFileName(treeView.SelectedNode.FullPath.ToString()), this, new Point(treeView.Left + flowLayoutPanel1.Width + 1, treeView.Top + flowLayoutPanel1.Width + 1), Int32.MaxValue);                        
 
             DoDragDrop(e.Item, DragDropEffects.Copy);
             dragsource = "tree";
@@ -208,7 +210,7 @@ namespace test_task
         private void pictureMover(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
-            {
+            {                
                 PictureBox pb = (PictureBox)sender;
                 var img = pb.Image;
                 if (img == null) return;
@@ -235,7 +237,7 @@ namespace test_task
             else e.Effect = DragDropEffects.Copy; ////
         }
         private void picDragDrop(object sender, DragEventArgs e)
-        {
+        {            
             var bmp = (Bitmap)e.Data.GetData(DataFormats.Bitmap);
             PictureBox pb = (PictureBox)sender;
 
@@ -273,7 +275,7 @@ namespace test_task
                     //}
                 }                                                                
             }
-                     
+        
         }    
         
 
@@ -358,37 +360,172 @@ namespace test_task
 
         private void preshow(object sender)
         {
-            Panel panelfloat = new Panel();
-            Form1 f1 = new Form1();
-            panelfloat.BackColor = Color.Transparent;
-            panelfloat.BackgroundImage = ((PictureBox)sender).Image;
-            panelfloat.BackgroundImageLayout = ImageLayout.Zoom;
-            panelfloat.AutoScroll = true;
-            panelfloat.Name = "panelfloat";
-            panelfloat.Location = flowLayoutPanel1.Location;
-            this.Controls.Add(panelfloat);
-            panelfloat.Size = new Size(this.ClientRectangle.Width - panelfloat.Location.X, this.ClientRectangle.Height - panelfloat.Location.Y);
-            //panelfloat.Size = new Size(f1.Width - panelfloat.Location.X, f1.Height - panelfloat.Location.Y);
-            panelfloat.BringToFront();            
-            panelfloat.DoubleClick += preshow_DoubleClick;
+            //Panel panelfloat = new Panel();
+            //Form1 f1 = new Form1();
+            //panelfloat.BackColor = Color.Transparent;
+            //panelfloat.BackgroundImage = ((PictureBox)sender).Image;
+            //panelfloat.BackgroundImageLayout = ImageLayout.Zoom;
+            //panelfloat.AutoScroll = true;
+            //panelfloat.Name = "panelfloat";
+            //panelfloat.Location = flowLayoutPanel1.Location;
+            //this.Controls.Add(panelfloat);
+            //panelfloat.Size = new Size(this.ClientRectangle.Width - panelfloat.Location.X, this.ClientRectangle.Height - panelfloat.Location.Y);
+            ////panelfloat.Size = new Size(f1.Width - panelfloat.Location.X, f1.Height - panelfloat.Location.Y);
+            //panelfloat.BringToFront();            
+            //panelfloat.DoubleClick += preshow_DoubleClick;
+
+            foreach (Form form in Application.OpenForms)
+            {
+                if (form.Name.Equals("f2zoom"))
+                {
+                    return;
+                }
+            }
+
+            //Form f2 = new Form();
+            //f2.Name = "f2zoom"; 
+            Form f2 = new f2zoom();        
+            f2.Size = new Size(this.ClientRectangle.Width - (flowLayoutPanel1.Location.X+3), 
+                this.ClientRectangle.Height - (treeView.Location.Y)-3);
+            //f2.StartPosition = FormStartPosition.Manual;
+            f2.Location = flowLayoutPanel1.PointToScreen(Point.Empty);
+            //f2.FormBorderStyle = FormBorderStyle.None;           
+            PictureBox pb = new PictureBox();
+            pb.Dock = DockStyle.Fill;
+            pb.SizeMode = PictureBoxSizeMode.Zoom;
+            pb.BackColor = Color.Transparent;
+            pb.Image = Image.FromFile(picboxes[((PictureBox)sender).Name]);
+            //f2.Size = pb.ClientSize;
+            pb.MouseDoubleClick += closepreshow;
+            pb.MouseWheel+= new MouseEventHandler(pb_MouseWheel);
+            f2.Controls.Add(pb);            
+            f2.Show();
+            f2.TopMost = true;
+
+            f2w = f2.Width;
+            f2h = f2.Height;
+        }
+
+        private void closepreshow(object o, EventArgs e)
+        {
+            foreach (Form form in Application.OpenForms)
+            {
+                if (form.Name.Equals("f2zoom"))
+                {
+                    form.Close();
+                    return;
+                }
+            }
+        }
+
+        private void pb_MouseWheel(object sender, MouseEventArgs e)
+        {
+            Form f2 = new Form();
+            foreach (Form form in Application.OpenForms)
+            {
+                if (form.Name.Equals("f2zoom"))
+                {
+                    f2 = form;
+                }
+            }
+
+            if (e.Delta < 0)
+            {
+                
+                f2.Size = new Size((int)(f2.Width * 0.8), (int)(f2.Height * 0.8));
+                //f2.Size = new Size(f2.Width-20, f2.Width-20);
+            }
+            else
+            {
+                if (f2.Height >= f2h && f2.Width >= f2w) return;
+                f2.Size = new Size((int)(f2.Width * 1.1), (int)(f2.Height * 1.1));
+            }
+
+
+            //if (e.Delta > 0)
+            //    factor += 0.2;
+            //else
+            //    factor -= 0.2;
+            //((PictureBox)sender).Image = resizeImage(((PictureBox)sender).Image, new Size((int)(((PictureBox)sender).Image.Width * factor), (int)(((PictureBox)sender).Image.Height * factor)));
         }
 
         private void preshow_DoubleClick(object sender, EventArgs e)
         {
             //((Panel)Controls["panelfloat"]).Dispose();
             //Controls.Remove((Panel)Controls["panelfloat"]);
-
             foreach (Control item in Controls)
             {
                 if (item.Name == "panelfloat")
                 {
                     Controls.Remove(item);
-                    return; //important step
+                    return;
                 }
             }
         }
 
+        private void Form1_MouseMove(object sender, MouseEventArgs e)
+        {
+            //if (e.Button == MouseButtons.Left)
+            //{                
+            //    toolTip1.Show(Path.GetFileName(treeView.SelectedNode.FullPath.ToString()), this, new Point(50,50), Int32.MaxValue);
+            //    toolTip1.ShowAlways = true;
+            //}            
+        }
+
+        private void treeView_MouseMove(object sender, MouseEventArgs e)
+        {
+            //if (dragsource.Equals("tree") && treeView.SelectedNode != treeView.Nodes[0] && e.Button == MouseButtons.Left)
+            //{
+            //    string s = Path.GetFileName(treeView.SelectedNode.FullPath.ToString());
+            //    this.Cursor = CreateCursor((Bitmap)DrawText(s), 5, 5);
+            //}
+        }
+        private Image DrawText(String s)
+        {
+            Image img = new Bitmap(1, 1);
+            Graphics drawing = Graphics.FromImage(img);
+            SizeF sSize = drawing.MeasureString(s, this.Font);
+            img.Dispose();
+            drawing.Dispose();
+            img = new Bitmap((int)sSize.Width, (int)sSize.Height);
+            drawing = Graphics.FromImage(img);
+            drawing.Clear(Color.White);
+            Brush textBrush = new SolidBrush(Color.Black);
+            drawing.DrawString(s, this.Font, textBrush, 0, 0);
+            drawing.Save();
+            textBrush.Dispose();
+            drawing.Dispose();
+
+            return img;
+        }
 
 
-    }
+        ////////// мой курсор
+        public struct IconInfo
+        {
+            public bool fIcon;
+            public int xHotspot;
+            public int yHotspot;
+            public IntPtr hbmMask;
+            public IntPtr hbmColor;
+        }
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool GetIconInfo(IntPtr hIcon, ref IconInfo pIconInfo);
+        [DllImport("user32.dll")]
+        public static extern IntPtr CreateIconIndirect(ref IconInfo icon);
+        public static Cursor CreateCursor(Bitmap bmp, int xHotSpot, int yHotSpot)
+        {
+            IntPtr ptr = bmp.GetHicon();
+            IconInfo tmp = new IconInfo();
+            GetIconInfo(ptr, ref tmp);
+            tmp.xHotspot = xHotSpot;
+            tmp.yHotspot = yHotSpot;
+            tmp.fIcon = false;
+            ptr = CreateIconIndirect(ref tmp);
+            return new Cursor(ptr);
+        }
+        /////////// конец курсора
+        
+    }//class
 }

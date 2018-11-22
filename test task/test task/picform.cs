@@ -27,5 +27,15 @@ namespace test_task
             }
             catch(Exception exc) { MessageBox.Show("Изображение не найдено"); }
         }
+
+        private void picform_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            this.Close();
+        }
+
+        private void pictureBox1_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            this.Close();
+        }
     }
 }
