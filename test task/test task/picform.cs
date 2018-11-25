@@ -19,11 +19,14 @@ namespace test_task
         }
 
         private void picform_Load(object sender, EventArgs e)
-        {
+        {            
             try
             {
-                pictureBox1.Image = Image.FromFile(Form1.f2picpath);
-                label1.Text = Path.GetFileName(Form1.f2picpath).ToString();
+                if (Form1.pic4picform != null)
+                    pictureBox1.Image = Form1.pic4picform;
+                else { pictureBox1.Image = Image.FromFile(Form1.f2picpath[1]); }
+
+                label1.Text = Path.GetFileName(Form1.f2picpath[1]).ToString();
             }
             catch(Exception exc) { MessageBox.Show("Изображение не найдено"); }
         }
