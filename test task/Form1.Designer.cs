@@ -33,6 +33,9 @@
             this.менюToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.очиститьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.задатьКореньToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.изменитьПервыйКореньToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.добавитьКореньToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.сброситьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.анализToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.инверсияToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.закрытьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -88,10 +91,34 @@
             // 
             // задатьКореньToolStripMenuItem
             // 
+            this.задатьКореньToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.изменитьПервыйКореньToolStripMenuItem,
+            this.добавитьКореньToolStripMenuItem,
+            this.сброситьToolStripMenuItem});
             this.задатьКореньToolStripMenuItem.Name = "задатьКореньToolStripMenuItem";
             this.задатьКореньToolStripMenuItem.Size = new System.Drawing.Size(170, 22);
             this.задатьКореньToolStripMenuItem.Text = "Изменить корень";
-            this.задатьКореньToolStripMenuItem.Click += new System.EventHandler(this.задатьКореньToolStripMenuItem_Click);
+            // 
+            // изменитьПервыйКореньToolStripMenuItem
+            // 
+            this.изменитьПервыйКореньToolStripMenuItem.Name = "изменитьПервыйКореньToolStripMenuItem";
+            this.изменитьПервыйКореньToolStripMenuItem.Size = new System.Drawing.Size(256, 22);
+            this.изменитьПервыйКореньToolStripMenuItem.Text = "Изменить корень по умолчанию";
+            this.изменитьПервыйКореньToolStripMenuItem.Click += new System.EventHandler(this.изменитьПервыйКореньToolStripMenuItem_Click);
+            // 
+            // добавитьКореньToolStripMenuItem
+            // 
+            this.добавитьКореньToolStripMenuItem.Name = "добавитьКореньToolStripMenuItem";
+            this.добавитьКореньToolStripMenuItem.Size = new System.Drawing.Size(256, 22);
+            this.добавитьКореньToolStripMenuItem.Text = "Добавить корень";
+            this.добавитьКореньToolStripMenuItem.Click += new System.EventHandler(this.добавитьКореньToolStripMenuItem_Click);
+            // 
+            // сброситьToolStripMenuItem
+            // 
+            this.сброситьToolStripMenuItem.Name = "сброситьToolStripMenuItem";
+            this.сброситьToolStripMenuItem.Size = new System.Drawing.Size(256, 22);
+            this.сброситьToolStripMenuItem.Text = "По умолчанию";
+            this.сброситьToolStripMenuItem.Click += new System.EventHandler(this.сброситьToolStripMenuItem_Click);
             // 
             // анализToolStripMenuItem
             // 
@@ -127,8 +154,8 @@
             // фурьеToolStripMenuItem
             // 
             this.фурьеToolStripMenuItem.Name = "фурьеToolStripMenuItem";
-            this.фурьеToolStripMenuItem.Size = new System.Drawing.Size(108, 22);
-            this.фурьеToolStripMenuItem.Text = "Фурье";
+            this.фурьеToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.фурьеToolStripMenuItem.Text = "git проекта";
             this.фурьеToolStripMenuItem.Click += new System.EventHandler(this.фурьеToolStripMenuItem_Click);
             // 
             // treeView
@@ -305,6 +332,9 @@
         private System.Windows.Forms.ToolStripMenuItem инверсияToolStripMenuItem;
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.ToolStripMenuItem инверсияToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem изменитьПервыйКореньToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem добавитьКореньToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem сброситьToolStripMenuItem;
     }
 }
 

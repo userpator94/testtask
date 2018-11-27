@@ -58,7 +58,7 @@ namespace test_task
             Application.Exit();
         }
 
-        private void задатьКореньToolStripMenuItem_Click(object sender, EventArgs e)
+        private void изменитьПервыйКореньToolStripMenuItem_Click(object sender, EventArgs e)
         {
             DialogResult dialogresult = this.folderBrowserDialog1.ShowDialog();
             if (dialogresult == DialogResult.OK)
@@ -66,8 +66,25 @@ namespace test_task
                 rootpath = folderBrowserDialog1.SelectedPath.ToString();
                 ListDirectory(treeView, rootpath);
             }
-            
         }
+
+        private void добавитьКореньToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DialogResult dialogresult = this.folderBrowserDialog1.ShowDialog();
+            if (dialogresult == DialogResult.OK)
+            {
+                rootpath = folderBrowserDialog1.SelectedPath.ToString();
+                treeView.Nodes.Add(CreateDirectoryNode(new DirectoryInfo(rootpath)));
+                treeView.Nodes[treeView.Nodes.Count - 1].Expand();
+            }            
+        }
+
+        private void сброситьToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            rootpath = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
+            ListDirectory(treeView, rootpath);
+        }
+
         private void анализToolStripMenuItem_Click(object sender, EventArgs e)
         {
             //Bitmap image1;
@@ -152,7 +169,7 @@ namespace test_task
 
         private void фурьеToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start("https://google.gik-team.com/?q=%D0%B0%D0%BD%D0%B0%D0%BB%D0%B8%D0%B7+%D1%84%D1%83%D1%80%D1%8C%D0%B5");
+            System.Diagnostics.Process.Start("https://github.com/userpator94/testtask");
         }
 
         private void ListDirectory(TreeView treeView, string path)
@@ -160,7 +177,7 @@ namespace test_task
             treeView.Nodes.Clear();
             var rootDirectoryInfo = new DirectoryInfo(path);
             treeView.Nodes.Add(CreateDirectoryNode(rootDirectoryInfo));
-            treeView.Nodes[0].Expand();
+            treeView.Nodes[0].Expand();            
         }
         private static TreeNode CreateDirectoryNode(DirectoryInfo directoryInfo)
         {
@@ -468,71 +485,7 @@ namespace test_task
                 f2h = f2.Height;
             }
             catch(Exception exc) { MessageBox.Show(exc.Message, "что-то пошло не так"); }
-        }
-
-        //private void closepreshow(object o, EventArgs e)
-        //{
-        //    foreach (Form form in Application.OpenForms)
-        //    {
-        //        if (form.Name.Equals("f2zoom"))
-        //        {
-        //            PictureBox pb = (PictureBox)form.Controls.Find("pb_f2zoom", true)[0];
-        //            if (pb.Image != null) pb.Image.Dispose();
-        //            form.Close();
-        //            return;
-        //        }
-        //    }
-        //}
-
-        //private void pb_MouseWheel(object sender, MouseEventArgs e)
-        //{
-        //    Form f2 = Application.OpenForms["f2zoom"];
-
-        //    if (e.Delta < 0)
-        //    {
-        //        PictureBox pb_source = (PictureBox)Controls.Find(f2picpath[0], true)[0];
-        //        int a = pb_source.Height;
-        //        //if (f2.Height <= (f2h / 2) || f2.Width <= (f2w / 2))
-        //        //{
-        //        //    f2.Location = pb_source.PointToScreen(Point.Empty);
-        //        //    f2.BringToFront();
-        //        //    f2.Focus();
-        //        //    f2.TopMost = true;
-        //        //}
-        //        if (f2.Height <= a && f2.Width <= a) { ((PictureBox)sender).Image.Dispose(); f2.Close(); return; }
-        //        if ((int)(f2.Width * 0.95) < a || (int)(f2.Height * 0.95) < a)
-        //        {
-        //            f2.Size = new Size(a, a);
-        //        }
-        //        else {
-        //            f2.Size = new Size((int)(f2.Width * 0.95), (int)(f2.Height * 0.95));
-        //            //f2.Location = new Point(f2.Location.X + (int)(f2.Width * 0.05), f2.Location.Y + (int)(f2.Height * 0.05));
-        //        }
-                            
-        //    }
-        //    else if (e.Delta > 0)
-        //    {
-        //        if (f2.Height >= f2h || f2.Width >= f2w)
-        //        {
-        //            //return;
-        //            //PictureBox picbox = (PictureBox)sender;
-        //            PictureBox picbox = (PictureBox)f2.Controls.Find("pb_f2zoom", true)[0];
-        //            float zoomFactor = 1.1f;
-        //            Bitmap oldpic = (Bitmap)picbox.Image;
-        //            picbox.Image.Dispose();
-        //            //picbox.Image = resizeImage(oldpic, new Size((int)(picbox.Image.Width * factor), (int)(picbox.Image.Height * factor)));
-        //            Size newSize = new Size((int)(oldpic.Width * zoomFactor), (int)(oldpic.Height * zoomFactor));
-        //            picbox.Image = new Bitmap(oldpic, newSize);
-        //        }
-        //        if ((int)(f2.Width * 1.05) > f2w || (int)(f2.Height * 1.05) > f2h)
-        //        {
-        //            f2.Size = new Size(f2w, f2h);
-        //        }
-        //        else
-        //            f2.Size = new Size((int)(f2.Width * 1.05), (int)(f2.Height * 1.05));
-        //    }
-
-        //}
+        }        
 
         private void picInversion(PictureBox pb)
         {            
